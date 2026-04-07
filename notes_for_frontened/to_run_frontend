@@ -1,0 +1,5 @@
+type this  into terminal 
+ cd incident-dashboard
+
+ then type this
+ npm run dev
