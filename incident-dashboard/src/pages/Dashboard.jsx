@@ -3,7 +3,7 @@ import KPICard from "../components/KPI/KPICard";
 import BarChartComponent from "../components/charts/BarChart";
 import LineChartComponent from "../components/charts/LineChart";
 import PieChartComponent from "../components/charts/PieChart";
-import { fetchIncidents, fetchResponses } from "../services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchIncidents, fetchResponses } from "../services/apiClient";
 import {
   getAverageResolutionTime,
   getAverageResponseTime,
@@ -34,6 +34,7 @@ function Dashboard({ theme }) {
         if (isMounted) {
           setIncidents(incidentData);
           setResponses(responseData);
+          setError("");
         }
       } catch (err) {
         console.error(err);
@@ -48,9 +49,11 @@ function Dashboard({ theme }) {
     }
 
     loadDashboard();
+    const intervalId = window.setInterval(loadDashboard, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 
@@ -78,7 +81,10 @@ function Dashboard({ theme }) {
       new Date(incident.detected_at) > new Date(mostRecent) ? incident.detected_at : mostRecent,
     incidents[0]?.detected_at ?? ""
   );
-  const incidentsToday = incidents.filter((incident) => incident.detected_at === latestDate).length;
+  const latestDay = latestDate.slice(0, 10);
+  const incidentsToday = incidents.filter(
+    (incident) => incident.detected_at.slice(0, 10) === latestDay
+  ).length;
   const previousCount = Math.max(incidents.length - incidentsToday, 1);
 
   const kpiCards = [

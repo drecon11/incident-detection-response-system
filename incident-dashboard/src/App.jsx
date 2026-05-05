@@ -18,7 +18,7 @@ import Incidents from "./pages/Incidents";
 import Login from "./pages/Login";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import { fetchIncidents } from "./services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchIncidents } from "./services/apiClient";
 import { STORAGE_KEYS, readBooleanSetting } from "./utils/appStorage";
 
 function App() {
@@ -108,9 +108,11 @@ function App() {
     }
 
     loadNotification();
+    const intervalId = window.setInterval(loadNotification, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
       window.clearTimeout(timeoutId);
     };
   }, [isAuthenticated, notificationsEnabled]);
@@ -151,7 +153,7 @@ function App() {
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} theme={theme} />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );

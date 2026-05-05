@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import BarChartComponent from "../components/charts/BarChart";
 import LineChartComponent from "../components/charts/LineChart";
 import PieChartComponent from "../components/charts/PieChart";
-import { fetchIncidents } from "../services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchIncidents } from "../services/apiClient";
 import { getGeoIncidentCounts, getHeatmapCells } from "../utils/dashboardData";
 
 function Analytics({ theme }) {
@@ -19,6 +19,7 @@ function Analytics({ theme }) {
 
         if (isMounted) {
           setIncidents(incidentData);
+          setError("");
         }
       } catch (err) {
         console.error(err);
@@ -33,9 +34,11 @@ function Analytics({ theme }) {
     }
 
     loadAnalytics();
+    const intervalId = window.setInterval(loadAnalytics, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 

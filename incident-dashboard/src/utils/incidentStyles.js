@@ -6,6 +6,9 @@ export function getStatusColor(status) {
 }
 
 export function getSeverityStyle(severity) {
+  if (severity === "Critical") {
+    return "bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-semibold";
+  }
   if (severity === "High") return "bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs font-semibold";
   if (severity === "Medium") {
     return "bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold";

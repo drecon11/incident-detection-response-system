@@ -1,4 +1,5 @@
 const severityWeight = {
+  Critical: 4,
   High: 3,
   Medium: 2,
   Low: 1,
@@ -16,7 +17,7 @@ const ipCountryMap = {
 };
 
 export function getPriorityLabel(incident) {
-  if (incident.severity === "High" && incident.status === "New") {
+  if (incident.severity === "Critical" || (incident.severity === "High" && incident.status === "New")) {
     return "Critical";
   }
 

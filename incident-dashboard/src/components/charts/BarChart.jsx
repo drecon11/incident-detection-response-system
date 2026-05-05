@@ -1,5 +1,24 @@
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+function getIncidentDay(value) {
+  if (!value) {
+    return "Unknown";
+  }
+
+  return value.slice(0, 10);
+}
+
+function formatDayLabel(value) {
+  if (!value || value === "Unknown") {
+    return value;
+  }
+
+  return new Date(`${value}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 function BarChartComponent({ incidents = [], theme = "light" }) {
   const axisColor = theme === "dark" ? "#94a3b8" : "#64748b";
   const tooltipStyle =
@@ -10,7 +29,7 @@ function BarChartComponent({ incidents = [], theme = "light" }) {
   const grouped = {};
 
   incidents.forEach((incident) => {
-    const date = incident.detected_at;
+    const date = getIncidentDay(incident.detected_at);
 
     if (!grouped[date]) {
       grouped[date] = { created: 0, closed: 0 };
@@ -23,18 +42,24 @@ function BarChartComponent({ incidents = [], theme = "light" }) {
     }
   });
 
-  const data = Object.keys(grouped).map(date => ({
-    date,
-    created: grouped[date].created,
-    closed: grouped[date].closed
-  }));
+  const data = Object.keys(grouped)
+    .sort((left, right) => new Date(left) - new Date(right))
+    .map((date) => ({
+      date,
+      label: formatDayLabel(date),
+      created: grouped[date].created,
+      closed: grouped[date].closed,
+    }));
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
-        <XAxis dataKey="date" tick={{ fill: axisColor, fontSize: 12 }} />
+        <XAxis dataKey="label" tick={{ fill: axisColor, fontSize: 12 }} />
         <YAxis tick={{ fill: axisColor, fontSize: 12 }} />
-        <Tooltip contentStyle={tooltipStyle} />
+        <Tooltip
+          contentStyle={tooltipStyle}
+          labelFormatter={(value, payload) => payload?.[0]?.payload?.date ?? value}
+        />
         <Bar dataKey="created" fill="#3b82f6" />
         <Bar dataKey="closed" fill="#22c55e" />
       </BarChart>

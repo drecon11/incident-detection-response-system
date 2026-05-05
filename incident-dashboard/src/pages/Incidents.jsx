@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchIncidents } from "../services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchIncidents } from "../services/apiClient";
 import { getIncidentTypeOptions, getPriorityLabel } from "../utils/dashboardData";
 import {
   getPriorityStyle,
@@ -26,6 +26,7 @@ function Incidents() {
 
         if (isMounted) {
           setIncidents(incidentData);
+          setError("");
         }
       } catch (err) {
         console.error(err);
@@ -40,9 +41,11 @@ function Incidents() {
     }
 
     loadIncidents();
+    const intervalId = window.setInterval(loadIncidents, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 
@@ -96,6 +99,7 @@ function Incidents() {
             onChange={(event) => setSeverityFilter(event.target.value)}
           >
             <option value="All">All Severities</option>
+            <option value="Critical">Critical</option>
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>

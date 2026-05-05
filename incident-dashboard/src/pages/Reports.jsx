@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
-import { fetchIncidents, fetchResponses } from "../services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchIncidents, fetchResponses } from "../services/apiClient";
 import { exportIncidentsReportCsv } from "../utils/exportCsv";
 import { getPriorityLabel } from "../utils/dashboardData";
 import { getSeverityStyle, getStatusColor } from "../utils/incidentStyles";
@@ -26,6 +26,7 @@ function Reports() {
         if (isMounted) {
           setIncidents(incidentData);
           setResponses(responseData);
+          setError("");
         }
       } catch (err) {
         console.error(err);
@@ -40,9 +41,11 @@ function Reports() {
     }
 
     loadReports();
+    const intervalId = window.setInterval(loadReports, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 

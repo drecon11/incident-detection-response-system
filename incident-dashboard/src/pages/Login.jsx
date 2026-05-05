@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ShieldAlert } from "lucide-react";
 
-function Login({ onLogin, theme }) {
+function Login({ onLogin }) {
   const [role, setRole] = useState("Analyst");
 
   return (
@@ -14,7 +14,7 @@ function Login({ onLogin, theme }) {
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Incident Guard</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Frontend-only sign in for the SOC dashboard
+              Security operations command center
             </p>
           </div>
         </div>
@@ -22,7 +22,7 @@ function Login({ onLogin, theme }) {
         <div className="space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Select Role
+              Access Role
             </label>
             <select
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
@@ -35,7 +35,7 @@ function Login({ onLogin, theme }) {
           </div>
 
           <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">
-            Theme on entry: <strong>{theme}</strong>
+            Authorized monitoring workspace for incident analysis, response review, and audit visibility.
           </div>
 
           <button

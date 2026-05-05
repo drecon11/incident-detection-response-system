@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchActivityLogs } from "../services/mockApi";
+import { REFRESH_INTERVAL_MS, fetchActivityLogs } from "../services/apiClient";
 
 function Activity() {
   const [logs, setLogs] = useState([]);
@@ -15,6 +15,7 @@ function Activity() {
 
         if (isMounted) {
           setLogs(data);
+          setError("");
         }
       } catch (err) {
         console.error(err);
@@ -29,9 +30,11 @@ function Activity() {
     }
 
     loadActivity();
+    const intervalId = window.setInterval(loadActivity, REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 
